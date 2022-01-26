@@ -69,12 +69,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not phone.isdecimal():
             raise serializers.ValidationError('El número de celular solo debe contener números')
 
-        # print('****************************')
-        # print(User.CITY_CHOICES.)
-        # print('****************************')
-        # if not city in User.CITY_CHOICES:
-            # raise serializers.ValidationError('Seleccione una ciudad válida')
-
         return data
     
     def create(self, validated_data):
