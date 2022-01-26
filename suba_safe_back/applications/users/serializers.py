@@ -63,8 +63,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not last_name.replace(' ', '').isalpha():
             raise serializers.ValidationError('El apellidos solo debe contener letras')
 
-        if not(gender == 'M' or gender == 'F'):
-            raise serializers.ValidationError('Ingrese un género válido')
+        #if not(gender == 'M' or gender == 'F'):
+        #    raise serializers.ValidationError('Ingrese un género válido')
 
         if not phone.isdecimal():
             raise serializers.ValidationError('El número de celular solo debe contener números')
