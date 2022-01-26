@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField('Apellidos', max_length=20, blank=True)
     gender = models.CharField('Género', max_length=1, choices=GENDER_CHOICES, blank=True)
     phone = models.CharField('Teléfono', max_length=10)
-    city = models.CharField('Ciudad', max_length=20, choices=CITY_CHOICES)
+    city = models.CharField('Ciudad', max_length=20, choices=CITY_CHOICES, blank=True)
 
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
