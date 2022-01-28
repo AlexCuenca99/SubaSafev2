@@ -1,19 +1,33 @@
+#Imports de DRF
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 
+# Imports de Modelos
 from .models import User
 
 from django.contrib import auth
 
 
-# Verficación del token generado por 
-# medio de la autenticación de Google
+# Verficación del token generado por medio de la autenticación de Google
 class LoginSocialSerializer(serializers.Serializer):
-
     token_id = serializers.CharField(required=True)
 
 
-# Serializador para los usuarios
+# Serializador para la integración de datos de usuario en articulos
+class UserPartialDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'phone',
+        )
+
+
+# Serializador con todos los datos de los usuarios
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -75,7 +89,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return User.user_objects.create_user(**validated_data)
 
 
-# Serializador para validar una correo electrónico de un registro desde la app
+# Serializador para validar un correo electrónico de un registro desde la app
 class EmailVerificationSerializer(serializers.ModelSerializer):
     token = serializers.CharField(max_length=555)
 
@@ -84,6 +98,7 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
         fields = ['token']
 
 
+# Serializador para realizar el inicio de sesión de un usuario
 class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=25, min_length=2, write_only=True)
     username = serializers.CharField(max_length=25, min_length=2, read_only = True)
@@ -98,6 +113,7 @@ class LoginSerializer(serializers.ModelSerializer):
             'tokens'
         ]
 
+    # Validación de los datos del serializador
     def validate(self, data):
         email = data.get('email', '')
         password = data.get('password', '')
@@ -115,7 +131,6 @@ class LoginSerializer(serializers.ModelSerializer):
             'username': user.username,
             'tokens': user.tokens
         }
-        return super().validate(data)
     
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
