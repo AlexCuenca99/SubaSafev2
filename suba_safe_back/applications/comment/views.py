@@ -11,8 +11,5 @@ from .serializers import CommentSerializer
 
 
 class CommentAPIView(ListAPIView):
-    serializer_class = CommentSerializer
-
-    def get_queryset(self):
-        return Comment.objects.all()
+    pass
 
