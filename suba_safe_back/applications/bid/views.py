@@ -11,7 +11,4 @@ from .models import Bid
 
 
 class BidAPIView(ListAPIView):
-    serializer_class = BidSerializer
-
-    def get_queryset(self):
-        return Bid.objects.all()
+    pass
