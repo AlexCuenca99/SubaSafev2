@@ -5,7 +5,6 @@ from . import views
 app_name = 'article_app'
 
 urlpatterns = [
-    path('api/articulos', views.ListApiViewArticle.as_view(), name='articulos'),
     path('api/articulo/por-usuario', views.ListAPIViewArticleByUser.as_view(), name='articulo-por_usuario'),
     path('api/articulo/por-categoria/<category>', views.ListApiViewArticleByCategory.as_view(), name='articulo-por_categoria'),
 ]
