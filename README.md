@@ -113,4 +113,8 @@ Don't worry. It is easy to use. You must follow these steps:
 
     **SOLUTION:** Add allow_null=True in serializer field. <https://stackoverflow.com/questions/42158692/django-nested-serializer-allow-null-true>
 
+-   **ERROR:** Turn single fields in an object field
+
+    **SOLUTION:** Make a new SerializerMethodField Where the desired fields are included. Then create a serializer to those fields.
+
 _By: Alex Cuenca_
