@@ -16,7 +16,4 @@ from .serializers import AuctionSerializer
 
 
 class AuctionAPIView(ListAPIView):
-    serializer_class = AuctionSerializer
-
-    def get_queryset(self):
-        return Auction.objects.all()
+    pass
