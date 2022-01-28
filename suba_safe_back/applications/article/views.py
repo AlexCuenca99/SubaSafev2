@@ -1,23 +1,18 @@
-# Third-Party Apps
+# Imports de Third-Party Apps
 from rest_framework.generics import (
     ListAPIView,
 )
 
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-
+# Imports de serializadores
 from .serializers import ArticleSerializer
 
+# Imports de modelos
 from .models import Article
 
 
+# Vista para filtrar los articulos por usuario
 class ListAPIViewArticleByUser(ListAPIView):
     serializer_class = ArticleSerializer
-
-    # Idetificación y autenticación del usuario
-    authentication_classes = (TokenAuthentication,)
-
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
 
@@ -25,20 +20,10 @@ class ListAPIViewArticleByUser(ListAPIView):
         return Article.objects.articles_by_user(user)
 
 
+# Vista para filtrar los artículos por categoría
 class ListApiViewArticleByCategory(ListAPIView):
     serializer_class = ArticleSerializer
-
-    # # Identificación y autenticación del usuario
-    # authentication_classes = (TokenAuthentication,)
-    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         category = self.kwargs['category']
         return Article.article_objects.articles_by_category(category)
-
-
-class ListApiViewArticle(ListAPIView):
-    serializer_class = ArticleSerializer
-
-    def get_queryset(self):
-        return Article.article_objects.all()
