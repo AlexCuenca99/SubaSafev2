@@ -15,7 +15,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.user_objects.all()
 
     def create(self, request, *args, **kwargs):
-
         try:
             email = User.user_objects.get(email=request.data['email'])
 
@@ -23,14 +22,12 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'Status': 'Ya existe una cuenta asociada al correo ingresado'})
 
         except User.DoesNotExist:
-            
             request.data['password'] = make_password(request.data['password'])
-            #
+            
             return super().create(request, *args, **kwargs)
     
 
     def partial_update(self, request, *args, **kwargs):
-        
         password = request.data['password']
 
         if password:
