@@ -1,10 +1,9 @@
-from django.urls import path, include
+from django.urls import path
 
-from . import views, viewsets
+from . import viewsets
 
 app_name = 'payment_app'
 
 urlpatterns = [
-    path('api/pagos/', views.PaymentListAPIView.as_view(), name='pagos'),
-    path('confirmar/pago/', viewsets.PaymentProcessViewSet, name='confirmar-pago'),
+    # path('confirmar/pago/', viewsets.PaymentProcessViewSet, name='confirmar-pago'),
 ]
