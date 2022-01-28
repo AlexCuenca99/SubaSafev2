@@ -113,7 +113,7 @@ class RegisterAPIView(generics.GenericAPIView):
         current_site = get_current_site(request).domain
         relativeLink = reverse('users_app:verificar-email')
         absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-        email_body = 'Hi ' + user.username + '\n' + 'Use the link below to verify your email \n' + absurl
+        email_body = '¡Hola ' + user.username + '!\n' + 'Utiliza el siguiente enlace para verificar su correo electrónico\n' + absurl
         data = {
             'email_body': email_body, 
             'email_recipient': user.email,
@@ -138,6 +138,7 @@ class VerifyEmail(views.APIView):
         type = openapi.TYPE_STRING
     )
 
+    # Decorador para agregar un campo de forma manual en una petición GET              
     @swagger_auto_schema(manual_parameters=[token_param_config])
     def get(self, request):
         token = request.GET.get('token')
@@ -158,8 +159,7 @@ class VerifyEmail(views.APIView):
             return Response({'STATUS': 'El token de usuario ha expirado'})
 
 
-# Vista para que un usuario autenticado 
-# pueda obtener sus datos
+# Vista para que un usuario autenticado pueda obtener sus datos
 class UserAuthView(APIView):
     permission_class = [IsAuthenticated]
 
