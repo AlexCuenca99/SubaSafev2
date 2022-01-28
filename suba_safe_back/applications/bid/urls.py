@@ -5,5 +5,5 @@ from . import views
 app_name = 'bid_app'
 
 urlpatterns = [
-    path('api/ofertas/', views.BidAPIView.as_view(), name='ofertas'),
+    # path('api/ofertas/', views.BidAPIView.as_view(), name='ofertas'),
 ]
