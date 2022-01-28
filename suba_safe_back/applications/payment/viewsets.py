@@ -1,4 +1,4 @@
-# Third-Party Apps Imports
+# Imports de Third-Party Apps 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -11,17 +11,14 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.urls import reverse
 
-# Serializar a JSON
-import json
-
 from applications.users.utils import Util
 
-# Imports de los Modelos
+# Imports de Modelos
 from applications.auction.models import Auction
 from applications.article.models import Article
 from .models import Payment
 
-# Serializadores Imports
+# Imports de Serializadores 
 from .serializers import (
     PaymentProcessSerializer,
     PaymentSerializer,
@@ -87,13 +84,13 @@ class PaymentProcessViewSet(viewsets.ViewSet):
                 current_site = get_current_site(request).domain
                 relativeLink = reverse('payment_app:confirmar-pago')
                 #absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-                email_body = 'Hi ' + str(self.request.user) + '\n' + 'Haz ganado la subasta de nombre: ' + str(article.name) + '\n' + 'El precio a pagar es: ' + str(article.current_bid) + ' $'
+                email_body = '¡En hora buena ' + str(self.request.user) + '!\n' + 'Haz ganado la subasta del artículo: ' + str(article.name) + '\n' + 'El precio que tienes que pagar es: ' + str(article.current_bid) + ' $'
                 data = {
                     'email_body': email_body, 
                     'email_recipient': self.request.user,
                     'email_subject': 'Confirmación del Pago'
                 }
-                #
+                
                 Util.send_email(data)
                 return Response({'Status': 'Su pago se ha guardado.', 'Estado': 'Hay un ganador. Esperando la confirmación.'})
             except Auction.DoesNotExist:
