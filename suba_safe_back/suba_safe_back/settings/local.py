@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from .base import *
 
 import firebase_admin
