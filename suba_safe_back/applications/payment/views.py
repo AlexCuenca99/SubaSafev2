@@ -12,8 +12,4 @@ from .serializers import PaymentSerializer
 
 
 class PaymentListAPIView(ListAPIView):
-
-    serializer_class = PaymentSerializer
-    
-    def get_queryset(self):
-        return Payment.objects.all()
+    pass
