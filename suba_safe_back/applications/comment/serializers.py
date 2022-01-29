@@ -18,6 +18,8 @@ class CommentSerializer(serializers.ModelSerializer):
             'user',
             'users',
             'article',
+            'created',
+            'modified',
         )
     
     def get_users(self, obj):
