@@ -33,7 +33,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             'buyer',
             'watchers',
             'created',
-            'modified'
+            'modified',
         )
     
     def get_images(self, obj):
