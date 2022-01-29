@@ -18,6 +18,8 @@ class AuctionSerializer(serializers.ModelSerializer):
             'article',
             'articles',
             'payment',
+            'created',
+            'modified',
         )
     
     def get_articles(self, obj):

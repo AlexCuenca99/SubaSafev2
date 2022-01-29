@@ -24,6 +24,8 @@ class BidSerializer(serializers.ModelSerializer):
             'bidder',
             'bidders',
             'offer',
+            'created',
+            'modified',
         )
     
     def get_articles(self, obj):

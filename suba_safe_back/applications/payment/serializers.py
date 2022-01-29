@@ -19,6 +19,8 @@ class PaymentSerializer(serializers.ModelSerializer):
             'description',
             'payment_type',
             'status_payment',
+            'created',
+            'modified',
         )
     
     def get_users(self, obj):
