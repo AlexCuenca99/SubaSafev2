@@ -46,7 +46,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     # Override de LIST para obtener todos los comentarios
     def list(self, request):
-        queryset = Comment.objects.all()
+        queryset = Comment.comment_objects.all()
         serializer = CommentSerializer(queryset, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,7 +62,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             article = Article.article_objects.get(id=article_id)
             
-            comment = Comment.objects.create(
+            comment = Comment.comment_objects.create(
                 title = serializer.validated_data['title'],
                 content = serializer.validated_data['content'],
                 user = self.request.user,
@@ -81,14 +81,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         
         # Extraer objeto si lo halla o mostrar 404 si no. 
-        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment = get_object_or_404(Comment.comment_objects.all(), pk=pk)
         serializer = CommentSerializer(comment)
         #
         return Response(serializer.data, status = status.HTTP_200_OK)
     
     def update(self, request, pk=None):
         # Extraer objeto si lo halla o mostrar 404 si no. 
-        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment = get_object_or_404(Comment.comment_objects.all(), pk=pk)
         serializer = CommentProcessSerializer(data = request.data)
                 
         serializer.is_valid(raise_exception=True)
@@ -98,7 +98,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             article = Article.article_objects.get(id=article_id)
             
-            comment = Comment.objects.update(
+            comment = Comment.comment_objects.update(
                 title = serializer.validated_data['title'],
                 content = serializer.validated_data['content'],
                 user = self.request.user,
@@ -115,7 +115,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     def partial_update(self, request, pk=None):
         # Extraer objeto si lo halla o mostrar 404 si no. 
-        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment = get_object_or_404(Comment.comment_objects.all(), pk=pk)
         serializer = CommentProcessSerializer(data = request.data)
         
         serializer.is_valid(raise_exception=True)
@@ -125,7 +125,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             article = Article.article_objects.get(id=article_id)
             
-            comment = Comment.objects.update(
+            comment = Comment.comment_objects.update(
                 title = serializer.validated_data['title'],
                 content = serializer.validated_data['content'],
                 user = self.request.user,
@@ -142,7 +142,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, pk=None):
         # Extraer objeto si lo halla o mostrar 404 si no. 
-        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment = get_object_or_404(Comment.comment_objects.all(), pk=pk)
         comment.delete()
         
         return Response(status=status.HTTP_204_NO_CONTENT)
