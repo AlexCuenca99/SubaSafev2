@@ -16,5 +16,5 @@ class Comment(TimeStampedModel):
         verbose_name_plural = 'Comentarios'
 
     def __str__(self):
-        return str(self.id) + str(self.article.name)
+        return str(self.id) + ' ' + str(self.article.name)
 
