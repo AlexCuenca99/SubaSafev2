@@ -3,7 +3,6 @@ from rest_framework.generics import (
     ListAPIView,
 )
 from rest_framework import generics, views
-from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -42,7 +41,7 @@ class LoginUser(TemplateView):
 
 
 # Registro de una cuenta usando Firebase (Google)
-class GoogleLoginAPIView(APIView):
+class GoogleLoginAPIView(views.APIView):
 
     serializer_class = LoginSocialSerializer
 
@@ -160,7 +159,7 @@ class VerifyEmail(views.APIView):
 
 
 # Vista para que un usuario autenticado pueda obtener sus datos
-class UserAuthView(APIView):
+class UserAuthView(views.APIView):
     permission_class = [IsAuthenticated]
 
     def get(self, request):
