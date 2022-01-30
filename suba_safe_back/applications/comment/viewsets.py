@@ -1,5 +1,4 @@
 # Imports de Third-Party Apps 
-from calendar import c
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -9,7 +8,7 @@ from rest_framework.permissions import (
 )
 from rest_framework import (
     viewsets,
-    status
+    status,
 )
 
 # Django Imports
@@ -26,12 +25,15 @@ from .serializers import (
 )
 
 
-class CommentViewSet(viewsets.ViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     authentication_classes = (
         TokenAuthentication, 
         JWTAuthentication
     )
     
+    queryset = Article.article_objects.all()
+    serializer_class = CommentSerializer
+
     # Permisos para las aplicaciones
     def get_permissions(self):
         # Si el método es LIST o RETRIEVE
@@ -42,6 +44,14 @@ class CommentViewSet(viewsets.ViewSet):
 
         return [permission() for permission in permission_classes]
 
+    # Override de LIST para obtener todos los comentarios
+    def list(self, request):
+        queryset = Comment.objects.all()
+        serializer = CommentSerializer(queryset, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
     def create(self, request):
         serializer = CommentProcessSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -66,14 +76,7 @@ class CommentViewSet(viewsets.ViewSet):
             content = {'error': 'Artículo no válido'}
             
             return Response(content, status = status.HTTP_404_NOT_FOUND)
-        
-    # Override de LIST para obtener todos los comentarios
-    def list(self, request):
-        queryset = Comment.objects.all()
-        serializer = CommentSerializer(queryset, many=True)
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
     # Override de RETRIEVE para obtener un comentario específica
     def retrieve(self, request, pk=None):
         
@@ -81,5 +84,65 @@ class CommentViewSet(viewsets.ViewSet):
         comment = get_object_or_404(Comment.objects.all(), pk=pk)
         serializer = CommentSerializer(comment)
         #
-        return Response(serializer.data)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+    
+    def update(self, request, pk=None):
+        # Extraer objeto si lo halla o mostrar 404 si no. 
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        serializer = CommentProcessSerializer(data = request.data)
+                
+        serializer.is_valid(raise_exception=True)
+        article_id = serializer.validated_data['article']
 
+        # Recuperar objeto article_id en Artículo
+        try:
+            article = Article.article_objects.get(id=article_id)
+            
+            comment = Comment.objects.update(
+                title = serializer.validated_data['title'],
+                content = serializer.validated_data['content'],
+                user = self.request.user,
+                article = article
+            )
+                   
+            return Response(serializer.data, status = status.HTTP_200_OK)
+            # return Response({'success': 'Comentario agregado'})
+        
+        except Article.DoesNotExist:
+            content = {'error': 'Artículo no válido'}
+            
+            return Response(content, status = status.HTTP_404_NOT_FOUND)
+    
+    def partial_update(self, request, pk=None):
+        # Extraer objeto si lo halla o mostrar 404 si no. 
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        serializer = CommentProcessSerializer(data = request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        article_id = serializer.validated_data['article']
+
+        # Recuperar objeto article_id en Artículo
+        try:
+            article = Article.article_objects.get(id=article_id)
+            
+            comment = Comment.objects.update(
+                title = serializer.validated_data['title'],
+                content = serializer.validated_data['content'],
+                user = self.request.user,
+                article = article
+            )
+                   
+            return Response(serializer.data, status = status.HTTP_200_OK)
+            # return Response({'success': 'Comentario agregado'})
+        
+        except Article.DoesNotExist:
+            content = {'error': 'Artículo no válido'}
+            
+            return Response(content, status = status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, pk=None):
+        # Extraer objeto si lo halla o mostrar 404 si no. 
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
