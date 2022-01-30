@@ -1,4 +1,4 @@
-# Third-Party Apps Imports
+# Imports de Third-Party Apps
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -12,16 +12,16 @@ from rest_framework import (
     status,
 )
 
-# Django Imports
+# Imports de Django 
 from django.shortcuts import get_object_or_404
 
-# Serializadores Imports
+# Imports de Serializadores 
 from .serializers import (
     BidProcessSerializer,
     BidSerializer,
 )
 
-# Modelos Imports
+# Imports de Modelos 
 from applications.article.models import Article
 from applications.auction.models import Auction
 from .models import Bid
@@ -45,8 +45,8 @@ class BidProcessViewSet(viewsets.ViewSet):
 
     # Permisos para las aplicaciones
     def get_permissions(self):
-        # Si el método es LIST o RETRIEVE
-        if(self.action =='list' or self.action =='retrieve'):
+        # Permisos de la vista
+        if(self.action == 'list' or self.action == 'retrieve'):
             permission_classes = [AllowAny]
         elif (self.action == 'create'):
             permission_classes = [IsAuthenticated]
