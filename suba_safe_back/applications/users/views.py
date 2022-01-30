@@ -1,38 +1,36 @@
-# Third Party Apps
-from rest_framework.generics import (
-    ListAPIView,
-)
-from rest_framework import generics, views
-from rest_framework.authtoken.models import Token
+# Imports de Third Party Apps
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework import status
-
-
-from .utils import Util
-
 from firebase_admin import auth
-
-from django.contrib.sites.shortcuts import get_current_site
-from django.views.generic import TemplateView
-from django.urls import reverse
-from django.conf import settings
-
+from drf_yasg import openapi
+from rest_framework import (
+    generics, 
+    views,
+)
 import jwt
 
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+# Imports de Django
+from django.contrib.sites.shortcuts import get_current_site
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.urls import reverse
+
+# Imports de Util
+from .utils import Util
 
 # Imports de Serializadores
 from .serializers import (
+    EmailVerificationSerializer,
     LoginSocialSerializer, 
     RegisterSerializer, 
-    EmailVerificationSerializer,
     UserSerializer
 )
 
-# Modelos
+# Imports de Modelos
 from .models import User
     
 
@@ -118,15 +116,13 @@ class RegisterAPIView(generics.GenericAPIView):
             'email_recipient': user.email,
             'email_subject': 'Verify your email'
         }
-        #
+        
         Util.send_email(data)
-        #
-        #return Response({'Status': 'El usuario ha sido creado. Active su cuenta vía correo electrónico'})
+
         return Response(user_data, status = status.HTTP_201_CREATED)
 
 
-# APIView para verificar por correo electrónico
-# el registro de un usuario dentro de la app
+# APIView para verificar por correo electrónico el registro de un usuario dentro de la app
 class VerifyEmail(views.APIView):
     
     serializer_class = EmailVerificationSerializer
@@ -152,8 +148,10 @@ class VerifyEmail(views.APIView):
                 user.save()
 
             return Response({'STATUS': 'El usuario ha sido activado'})
+        
         except jwt.ExpiredSignatureError as identifier:
             return Response({'STATUS': 'El link de activación ha expirado'})
+        
         except jwt.exceptions.DecodeError as identifier:
             return Response({'STATUS': 'El token de usuario ha expirado'})
 
