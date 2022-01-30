@@ -1,18 +1,85 @@
-# Third-Party Apps Imports
-from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+# Imports de Third-Party Apps 
+from calendar import c
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny
+)
+from rest_framework import (
+    viewsets,
+    status
+)
 
+# Django Imports
+from django.shortcuts import get_object_or_404
+
+# Imports de los modelos
+from applications.article.models import Article
 from .models import Comment
 
-from .serializers import CommentSerializer
+# Imports de los serializadores
+from .serializers import (
+    CommentSerializer,
+    CommentProcessSerializer,
+)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
-    authentication_classes = (TokenAuthentication, JWTAuthentication)
-    permission_classes = [IsAuthenticated]
+class CommentViewSet(viewsets.ViewSet):
+    authentication_classes = (
+        TokenAuthentication, 
+        JWTAuthentication
+    )
+    
+    # Permisos para las aplicaciones
+    def get_permissions(self):
+        # Si el método es LIST o RETRIEVE
+        if(self.action =='list' or self.action =='retrieve'):
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
 
-    serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
+        return [permission() for permission in permission_classes]
+
+    def create(self, request):
+        serializer = CommentProcessSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        article_id = serializer.validated_data['article']
+        
+        # Recuperar objeto article_id en Artículo
+        try:
+            article = Article.article_objects.get(id=article_id)
+            
+            comment = Comment.objects.create(
+                title = serializer.validated_data['title'],
+                content = serializer.validated_data['content'],
+                user = self.request.user,
+                article = article
+            )
+                   
+            return Response(serializer.data, status = status.HTTP_201_CREATED)
+            # return Response({'success': 'Comentario agregado'})
+        
+        except Article.DoesNotExist:
+            content = {'error': 'Artículo no válido'}
+            
+            return Response(content, status = status.HTTP_404_NOT_FOUND)
+        
+    # Override de LIST para obtener todos los comentarios
+    def list(self, request):
+        queryset = Comment.objects.all()
+        serializer = CommentSerializer(queryset, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # Override de RETRIEVE para obtener un comentario específica
+    def retrieve(self, request, pk=None):
+        
+        # Extraer objeto si lo halla o mostrar 404 si no. 
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        serializer = CommentSerializer(comment)
+        #
+        return Response(serializer.data)
+
