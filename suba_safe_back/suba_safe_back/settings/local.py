@@ -30,7 +30,6 @@ MEDIA_URL = '/uploads/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
-
 # Configuración de FireBase
 cred = credentials.Certificate("FireBaseKey.json")
 firebase_admin.initialize_app(cred)
