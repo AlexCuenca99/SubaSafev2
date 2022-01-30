@@ -51,7 +51,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    
+    # Override de CREATE para crear un comentario
     def create(self, request):
         serializer = CommentProcessSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
