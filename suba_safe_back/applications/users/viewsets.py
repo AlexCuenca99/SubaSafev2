@@ -1,16 +1,20 @@
+# Imports de Third-Party Apps
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.permissions import IsAdminUser
 
+# Imporst de Django
 from django.contrib.auth.hashers import make_password
 
+# Imports de los modelos
 from .models import User
 
+# Imports de los serializadores
 from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    #permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     serializer_class = UserSerializer
     queryset = User.user_objects.all()
 
