@@ -1,5 +1,4 @@
 # Third-Party Apps Imports
-from unicodedata import category
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -12,13 +11,17 @@ from rest_framework import (
     status,
 )
 
+# Imports de Django 
+from django.shortcuts import get_object_or_404
+
 # Imports de los modelos
 from applications.category.models import Category
 from .models import Article
 
+# Imports de los serializadores
 from .serializers import (
-    ArticleSerializer,
     ArticleProcessSerializer,
+    ArticleSerializer,
 )
              
 
@@ -83,4 +86,39 @@ class ArticleViewSet(viewsets.ModelViewSet):
             
             return Response(content, status = status.HTTP_404_NOT_FOUND)
 
+    # Override de UPDATE para actualizar un artículo
+    def update(self, request, pk=None):
+        article = get_object_or_404(Article.article_objects.all(), pk=pk)
+        
+        serializer = ArticleProcessSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        category_id = serializer.validated_data['category']
+        
+        try:
+            category = Category.objects.get(id=category_id)
+            
+            article = Article.article_objects.update(
+                name = serializer.validated_data['name'],
+                description = serializer.validated_data['description'],
+                main_image = serializer.validated_data['main_image'],
+                main_image_opt_text = serializer.validated_data ['main_image_opt_text'],
+                image_1 = serializer.validated_data['image_1'],
+                image_1_opt_text = serializer.validated_data['image_1_opt_text'],
+                image_2 = serializer.validated_data['image_2'],
+                image_2_opt_text = serializer.validated_data['image_2_opt_text'],
+                image_3 = serializer.validated_data['image_3'],
+                image_3_opt_text = serializer.validated_data['image_3_opt_text'],
+                image_4 = serializer.validated_data['image_4'],
+                image_4_opt_text = serializer.validated_data['image_4_opt_text'],
+                starting_bid = serializer.validated_data['starting_bid'],
+                category = category,
+                seller = self.request.user,
+            )
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        
+        except Category.DoesNotExist:
+            content = {'error': 'La Categoría no existe'}
+            
+            return Response(content, status = status.HTTP_404_NOT_FOUND)
         
