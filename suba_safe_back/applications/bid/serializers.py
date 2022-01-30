@@ -78,5 +78,3 @@ class BiddersInAuctionSerializer(serializers.ModelSerializer):
 class BidProcessSerializer(serializers.Serializer):
     offer = serializers.DecimalField(max_digits=7, decimal_places=2)
     article = serializers.IntegerField()
-
-
