@@ -59,7 +59,6 @@ class BidProcessViewSet(viewsets.ViewSet):
         
         # Recuperar un objeto Artículo en Artículo
         try:
-            article_in_auction = Auction.objects.get(article=article_id)
             article = Article.article_objects.get(id=article_id)
 
             # Comprobar si oferta es válida
