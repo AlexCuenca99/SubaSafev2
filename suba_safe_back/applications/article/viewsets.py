@@ -5,13 +5,13 @@ from rest_framework.permissions import (
     IsAuthenticated,
     AllowAny
 )
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 
 
 from .models import Article
 
 from .serializers import ArticleSerializer
-
+             
 
 class ArticleViewSet(viewsets.ModelViewSet):
     # Únicamente los usuarios con un token de acceso podrán 
@@ -35,4 +35,4 @@ class ArticleViewSet(viewsets.ModelViewSet):
         queryset = Article.article_objects.all()
         serializer = ArticleSerializer(queryset, many=True)
         
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
