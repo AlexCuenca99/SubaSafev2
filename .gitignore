@@ -1,8 +1,13 @@
-# Envs
+# Virtual Environments
 envs
 
-# Uploads
+# Uploads (Media Files)
 uploads
+
+# Migrations
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
