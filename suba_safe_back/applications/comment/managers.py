@@ -8,3 +8,8 @@ class CommentManager(models.Manager):
         )
 
         return query
+    
+    def comments_by_article(self, article_id):
+        return self.filter(
+            article_id = article_id
+        ).order_by('article_id')
