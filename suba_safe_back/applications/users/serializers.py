@@ -42,8 +42,6 @@ class UserSerializer(serializers.ModelSerializer):
             'gender',
             'phone',
             'city',
-            'created',
-            'modified',
         )
 
 
