@@ -1,12 +1,12 @@
 # Third-Party Apps Imports
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Django Imports
-from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 # Serializadores Imports
 from .serializers import (
@@ -15,9 +15,8 @@ from .serializers import (
 )
 
 # Modelos Imports
-from .models import Auction
-from applications.payment.models import Payment
 from applications.article.models import Article
+from .models import Auction
 
 
 # Validar si un artículo sigue activo y si el tiempo de subasta es válido
