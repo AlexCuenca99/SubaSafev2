@@ -5,5 +5,5 @@ from . import views
 app_name = 'comment_app'
 
 urlpatterns = [
-    # path('api/comentarios/', views.CommentAPIView.as_view(), name='comentarios'),
+    path('comentarios/por-articulo/<articulo>', views.CommentByArticleListAPIView.as_view(), name='comentario-por_articulo'),
 ]
