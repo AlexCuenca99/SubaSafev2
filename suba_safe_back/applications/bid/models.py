@@ -1,8 +1,11 @@
+# Imports de Django
 from django.conf import settings
 from django.db import models
 
+# Imports de Third-Party Apps
 from model_utils.models import TimeStampedModel
 
+# Imports de Modelos
 from applications.article.models import Article
 
 
