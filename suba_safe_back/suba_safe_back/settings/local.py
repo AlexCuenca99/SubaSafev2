@@ -40,3 +40,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+SITE_URL = 'http://127.0.0.1:8000'
