@@ -1,9 +1,12 @@
 # Imports de Third-Party Apps 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-from rest_framework import viewsets
-
+from rest_framework import (
+    viewsets, 
+    status,
+)
 
 # Imports de Django
 from django.contrib.sites.shortcuts import get_current_site
@@ -29,7 +32,10 @@ from .serializers import (
 class PaymentProcessViewSet(viewsets.ViewSet):
     # Únicamente los usuarios con un token de acceso podrán 
     # usar a las operaciones CRUD
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (
+        TokenAuthentication,
+        JWTAuthentication,
+    )
 
     # Permisos para las aplicaciones
     def get_permissions(self):
@@ -55,46 +61,53 @@ class PaymentProcessViewSet(viewsets.ViewSet):
         auction_id = serializer.validated_data['auction']
 
         # Si ya existe un pago en una subasta activa
-        if Auction.objects.get(pk = auction_id).payment is not None:
-            return Response({'Status': 'Ya existe un pago sobre la subasta'})
-        else:
-            # Recuperar un objeto Artículo en Artículo
-            try:
-                auction = Auction.objects.get(id=auction_id)
-                
-                article = Article.article_objects.get(id = auction.article.id)
+        
+        try:
+            if Auction.objects.get(pk = auction_id).payment is not None:
+                content = {'errors': 'La subasta ha finalizado. Ya hay un pago sobre esta'}
+                return Response(content, status = status.HTTP_404_NOT_FOUND)
+            else:
+                # Recuperar un objeto Artículo en Artículo
+                try:
+                    auction = Auction.objects.get(id=auction_id)
+                    
+                    article = Article.article_objects.get(id = auction.article.id)
 
-                payment = Payment.objects.create(
-                    amount = auction.article.current_bid,
-                    user = self.request.user,
-                    description = serializer.validated_data.pop('description'),
-                    payment_type = serializer.validated_data.pop('payment_type'),
-                    status_payment = serializer.validated_data.pop('status_payment'),
-                    date_payment = timezone.now(),
-                )
+                    payment = Payment.objects.create(
+                        amount = auction.article.current_bid,
+                        user = self.request.user,
+                        description = serializer.validated_data.pop('description'),
+                        payment_type = serializer.validated_data.pop('payment_type'),
+                        status_payment = serializer.validated_data.pop('status_payment'),
+                        date_payment = timezone.now(),
+                    )
 
-                article.buyer = self.request.user
-                article.is_active = False
-                article.save()
+                    article.buyer = self.request.user
+                    article.is_active = False
+                    article.save()
 
-                auction.payment = payment
-                auction.save()
+                    auction.payment = payment
+                    auction.save()
 
-                # Envío de correo electrónico cuando se cierra una subasta. 
-                current_site = get_current_site(request).domain
-                relativeLink = reverse('payment_app:confirmar-pago')
-                #absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-                email_body = '¡En hora buena ' + str(self.request.user) + '!\n' + 'Haz ganado la subasta del artículo: ' + str(article.name) + '\n' + 'El precio que tienes que pagar es: ' + str(article.current_bid) + ' $'
-                data = {
-                    'email_body': email_body, 
-                    'email_recipient': self.request.user,
-                    'email_subject': 'Confirmación del Pago'
-                }
-                
-                Util.send_email(data)
-                return Response({'Status': 'Su pago se ha guardado.', 'Estado': 'Hay un ganador. Esperando la confirmación.'})
-            except Auction.DoesNotExist:
-                return Response({'Status': 'El artículo no tiene una subasta activa o no existe'})
+                    # Envío de correo electrónico cuando se cierra una subasta. 
+                    current_site = get_current_site(request).domain
+                    relativeLink = reverse('payment_app:confirmar-pago')
+                    #absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
+                    email_body = '¡En hora buena ' + str(self.request.user) + '!\n' + 'Haz ganado la subasta del artículo: ' + str(article.name) + '\n' + 'El precio que tienes que pagar es: ' + str(article.current_bid) + ' $'
+                    data = {
+                        'email_body': email_body, 
+                        'email_recipient': self.request.user,
+                        'email_subject': 'Confirmación del Pago'
+                    }
+                    
+                    Util.send_email(data)
+                    return Response({'Status': 'Su pago se ha guardado.', 'Estado': 'Hay un ganador. Esperando la confirmación.'})
+                except Auction.DoesNotExist:
+                    return Response({'Status': 'El artículo no tiene una subasta activa o no existe'})
+        except Auction.DoesNotExist:
+            content = {'errors': 'El artículo no existe'}
+            return Response(content, status = status.HTTP_404_NOT_FOUND)
+            
 
     def retrieve(self, request, pk=None):
         # Extraer objeto si lo halla o mostrar 404 si no. 
