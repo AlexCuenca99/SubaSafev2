@@ -1,4 +1,5 @@
 # Imports de Third-Party Apps 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -29,7 +30,10 @@ from .serializers import (
 class PaymentProcessViewSet(viewsets.ViewSet):
     # Únicamente los usuarios con un token de acceso podrán 
     # usar a las operaciones CRUD
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (
+        TokenAuthentication,
+        JWTAuthentication,
+    )
 
     # Permisos para las aplicaciones
     def get_permissions(self):
