@@ -3,7 +3,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets, 
+    status,
+)
 
 # Django Imports
 from django.shortcuts import get_object_or_404
@@ -72,7 +75,8 @@ class AuctionProcessViewSet(viewsets.ViewSet):
             
             # Si ya existe un artículo con una subasta activa
             if article:
-                return Response({'Status': 'Ya existe una subasta sobre el artículo'})
+                content = {'errors': 'Ya existe una subasta sobre el artículo'}
+                return Response(content, status = status.HTTP_404_NOT_FOUND)
 
         # Si no encuentra objeto Artículo en Subasta
         except Auction.DoesNotExist:
@@ -91,7 +95,9 @@ class AuctionProcessViewSet(viewsets.ViewSet):
                         article = article,
                         payment = None
                     )
-                    return Response({'Status': 'Subasta creada correctamente'})   
+                    
+                    content = {'messages': 'Subasta creada correctamente'}
+                    return Response(content, status = status.HTTP_201_CREATED)   
                 else:
 
                     # Comprobar cual es el tipo del error
@@ -102,7 +108,8 @@ class AuctionProcessViewSet(viewsets.ViewSet):
             #
             # Sino encuentra objeto Artículo en Artículo
             except Article.DoesNotExist:
-                return Response({'Status': 'El artículo no existe'})   
+                content = {'errors': 'El artículo no existe'}
+                return Response(content, status = status.HTTP_404_NOT_FOUND)
 
     # Override de RETRIEVE para obtener una subasta específica
     def retrieve(self, request, pk=None):
