@@ -51,8 +51,8 @@ urlpatterns = [
     path('', include('applications.article.urls')),
     path('', include('applications.auction.urls')),
     path('', include('applications.payment.urls')),
-    path('', include('applications.bid.urls')),
-    #path('', include('applications.category.urls')),
+    # path('', include('applications.bid.urls')),
+    # path('', include('applications.category.urls')),
     path('', include('applications.comment.urls')),
 
     # Routers del ViewSet
