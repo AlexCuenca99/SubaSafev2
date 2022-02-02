@@ -33,8 +33,8 @@ def is_valid(article, offer):
         return True
     else:
         return False
-
-
+    
+    
 # ViewSet para CRUD de un Proceso de Oferta
 class BidProcessViewSet(viewsets.ViewSet):
     # Únicamente los usuarios con un token de acceso podrán  usar a las operaciones CRUD
@@ -42,7 +42,7 @@ class BidProcessViewSet(viewsets.ViewSet):
         TokenAuthentication, 
         JWTAuthentication,
     )
-
+    
     # Permisos para las aplicaciones
     def get_permissions(self):
         # Permisos de la vista
@@ -57,6 +57,7 @@ class BidProcessViewSet(viewsets.ViewSet):
 
     # Override de LIST para obtener todas las ofertas
     def list(self, request):
+
         queryset = Bid.objects.all()
         serializer = BidSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -103,7 +104,6 @@ class BidProcessViewSet(viewsets.ViewSet):
         except Auction.DoesNotExist:
             content = {'errors': 'El artículo no tiene una subasta activa'}
             return Response(content, status = status.HTTP_404_NOT_FOUND)
-        
     
     # Override de RETRIEVE para obtener una subasta específica
     def retrieve(self, request, pk=None):
