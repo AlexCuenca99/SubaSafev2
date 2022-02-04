@@ -40,3 +40,4 @@ class ArticleManager(models.Manager):
             is_active = is_active,
             seller = user
         ).order_by('name')
+        
