@@ -26,3 +26,17 @@ class ArticleManager(models.Manager):
         return self.filter(
             is_active = is_active
         ).order_by('name')
+        
+    # Obtener artículos activos por usuario
+    def inactive_articles_by_user(self, is_active, user):
+        return self.filter(
+            is_active = is_active,
+            seller = user
+        ).order_by('name')
+    
+    # Obtener artículos inactivos por usuario
+    def inactive_articles_by_user(self, is_active, user):
+        return self.filter(
+            is_active = is_active,
+            seller = user
+        ).order_by('name')
