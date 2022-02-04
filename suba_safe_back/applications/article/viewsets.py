@@ -21,6 +21,7 @@ from .models import Article
 # Imports de los serializadores
 from .serializers import (
     ArticleProcessSerializer,
+    ArticleProcessSerializer2,
     ArticleSerializer,
 )
              
@@ -47,13 +48,18 @@ class ArticleViewSet(viewsets.ModelViewSet):
     
     # Override de LIST para obtener todas las ofertas
     def list(self, request):
+        print('*********************')
+        print('*********************')
+        print(request.data)
+        print('*********************')
+        print('*********************')
         queryset = Article.article_objects.all()
         serializer = ArticleSerializer(queryset, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     # Override de CREATE para crear un artículo
-    def create(self, request):
+    def create(self, request):    
         serializer = ArticleProcessSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
@@ -61,7 +67,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         
         try:
             category = Category.objects.get(id=category_id)
-            
+
             article = Article.article_objects.create(
                 name = serializer.validated_data['name'],
                 description = serializer.validated_data['description'],
@@ -79,12 +85,14 @@ class ArticleViewSet(viewsets.ModelViewSet):
                 category = category,
                 seller = self.request.user,
             )
+            
             return Response(serializer.data, status = status.HTTP_201_CREATED)
         
         except Category.DoesNotExist:
             content = {'error': 'La Categoría no existe'}
             
             return Response(content, status = status.HTTP_404_NOT_FOUND)
+
 
     # Override de UPDATE para actualizar un artículo
     def update(self, request, pk=None):

@@ -1,7 +1,7 @@
 # Imports de DRF
 from rest_framework import serializers
 
-# Imports de Modelos
+# Imports de los modelos
 from .models import Article
 
 # Imports de Serializadores
@@ -41,7 +41,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
         return serialized_objects
 
-
+            
 # Serializador para crear un artículo
 class ArticleProcessSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=40)
@@ -58,7 +58,7 @@ class ArticleProcessSerializer(serializers.Serializer):
     image_4_opt_text = serializers.CharField(max_length=50, required=False, default = 'Texto alternativo')
     starting_bid = serializers.DecimalField(max_digits=7, decimal_places=2)
     category = serializers.IntegerField()
-    
+       
     
 # Serializador para mostrar todas la imágenes en un arreglo
 class ImagesInArticleSerializer(serializers.ModelSerializer):
