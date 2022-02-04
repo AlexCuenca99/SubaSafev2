@@ -11,4 +11,5 @@ urlpatterns = [
     path('articulos/inactivos/', views.InactiveArticlesListAPIView.as_view(), name='articulos-inactivos'),
     path('articulos/activos/usuarios/', views.ActiveArticlesByUserListAPIView.as_view(), name='articulos-activos_por_usuario'),
     path('articulos/inactivos/usuarios/', views.InactiveArticlesByUserListAPIView.as_view(), name='articulos-inactivos_por_usuario'),
+    path('articulos/busqueda-por-nombre/<parametro>/', views.ArticleSearchByNameListAPIView.as_view(), name='articulos-busqueda_por_nombre'),
 ]

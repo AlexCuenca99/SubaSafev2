@@ -62,3 +62,16 @@ class InactiveArticlesByUserListAPIView(generics.ListAPIView):
         user = self.request.user
         
         return Article.article_objects.inactive_articles_by_user(is_active, user)
+
+
+# Vista para realizar una búsqueda de artículos
+class ArticleSearchByNameListAPIView(generics.ListAPIView):
+    serializer_class = ArticleSerializer
+    
+    def get_queryset(self):
+        # Se filtran los datos
+        params = self.kwargs['parametro']
+        return Article.article_objects.filter(
+            name__icontains = params
+        )
+    
