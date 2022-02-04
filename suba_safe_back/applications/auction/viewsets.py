@@ -66,12 +66,10 @@ class AuctionProcessViewSet(viewsets.ViewSet):
         #
         article_id = serializer.validated_data['article']
         current_time = serializer.validated_data.get('current_time')
-        payment_id = serializer.validated_data['payment']
 
         # Recuperar un objeto Artículo en Subasta
         try:
             article = Auction.objects.get(article=article_id)
-            #payment = Payment.objects.get(id=payment_id)
             
             # Si ya existe un artículo con una subasta activa
             if article:
@@ -96,15 +94,20 @@ class AuctionProcessViewSet(viewsets.ViewSet):
                         payment = None
                     )
                     
+                    article.is_active = True
+                    article.save()
+                    
                     content = {'messages': 'Subasta creada correctamente'}
                     return Response(content, status = status.HTTP_201_CREATED)   
                 else:
-
                     # Comprobar cual es el tipo del error
                     if is_valid(article, current_time) == 'active_failure':
-                        return Response({'Status': 'El artículo ya no está disponible'})
+                        content = {'errors': 'El artículo ya no está disponible'}
+                        return Response(content, status = status.HTTP_400_BAD_REQUEST)
                     elif is_valid(article, current_time) == 'current_time_failure':
-                        return Response({'Status': 'La fecha es errónea'})
+                        content = {'errors': 'Ingrese una fecha válida'}
+                        return Response(content, status = status.HTTP_400_BAD_REQUEST)
+
             #
             # Sino encuentra objeto Artículo en Artículo
             except Article.DoesNotExist:
@@ -113,7 +116,6 @@ class AuctionProcessViewSet(viewsets.ViewSet):
 
     # Override de RETRIEVE para obtener una subasta específica
     def retrieve(self, request, pk=None):
-
         # Extraer objeto si lo halla o mostrar 404 si no. 
         auction = get_object_or_404(Auction.objects.all(), pk=pk)
         serializer = AuctionSerializer(auction)
