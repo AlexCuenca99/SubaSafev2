@@ -47,11 +47,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
     
     # Override de LIST para obtener todas las ofertas
     def list(self, request):
-        print('*********************')
-        print('*********************')
-        print(request.data)
-        print('*********************')
-        print('*********************')
         queryset = Article.article_objects.all()
         serializer = ArticleSerializer(queryset, many=True)
         
