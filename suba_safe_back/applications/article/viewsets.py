@@ -21,7 +21,6 @@ from .models import Article
 # Imports de los serializadores
 from .serializers import (
     ArticleProcessSerializer,
-    ArticleProcessSerializer2,
     ArticleSerializer,
 )
              
