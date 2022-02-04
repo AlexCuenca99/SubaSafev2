@@ -24,7 +24,7 @@ class Article(TimeStampedModel):
     image_3_opt_text = models.CharField('Texto alt. 4', max_length=50, blank=True, null=True, default='Sin descripción')
     image_4 = models.ImageField('Imagen 5', upload_to='articles/optional', blank=True, null=True, default = 'no_image.png')
     image_4_opt_text = models.CharField('Texto alt. 5', max_length=50, blank=True, null=True, default='Sin descripción')
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     starting_bid = models.DecimalField('Oferta Inicial', max_digits=7, decimal_places=2)
     current_bid = models.DecimalField('Oferta Actual', max_digits=7, decimal_places=2, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='categoria_articulo')
