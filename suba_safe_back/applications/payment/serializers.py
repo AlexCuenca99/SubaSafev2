@@ -14,7 +14,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = (
             'id',
-            #'user',
             'users',
             'description',
             'payment_type',
@@ -46,7 +45,7 @@ class PaymentProcessSerializer(serializers.Serializer):
     description = serializers.CharField(max_length=130)
     payment_type = serializers.IntegerField()
     status_payment = serializers.IntegerField()
-    auction = serializers.IntegerField()
+    article = serializers.IntegerField()
 
     def validate_payment_type(self, value):
 

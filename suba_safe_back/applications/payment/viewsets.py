@@ -58,57 +58,67 @@ class PaymentProcessViewSet(viewsets.ViewSet):
         serializer = PaymentProcessSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         #
-        auction_id = serializer.validated_data['auction']
+        article_id = serializer.validated_data['article']
 
-        # Si ya existe un pago en una subasta activa
-        
         try:
-            if Auction.objects.get(pk = auction_id).payment is not None:
-                content = {'errors': 'La subasta ha finalizado. Ya hay un pago sobre esta'}
-                return Response(content, status = status.HTTP_404_NOT_FOUND)
-            else:
-                # Recuperar un objeto Artículo en Artículo
-                try:
-                    auction = Auction.objects.get(id=auction_id)
-                    
-                    article = Article.article_objects.get(id = auction.article.id)
-
-                    payment = Payment.objects.create(
-                        amount = auction.article.current_bid,
-                        user = self.request.user,
-                        description = serializer.validated_data.pop('description'),
-                        payment_type = serializer.validated_data.pop('payment_type'),
-                        status_payment = serializer.validated_data.pop('status_payment'),
-                        date_payment = timezone.now(),
-                    )
-
-                    article.buyer = self.request.user
-                    article.is_active = False
-                    article.save()
-
-                    auction.payment = payment
-                    auction.save()
-
-                    # Envío de correo electrónico cuando se cierra una subasta. 
-                    current_site = get_current_site(request).domain
-                    relativeLink = reverse('payment_app:confirmar-pago')
-                    #absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-                    email_body = '¡En hora buena ' + str(self.request.user) + '!\n' + 'Haz ganado la subasta del artículo: ' + str(article.name) + '\n' + 'El precio que tienes que pagar es: ' + str(article.current_bid) + ' $'
-                    data = {
-                        'email_body': email_body, 
-                        'email_recipient': self.request.user,
-                        'email_subject': 'Confirmación del Pago'
-                    }
-                    
-                    Util.send_email(data)
-                    return Response({'Status': 'Su pago se ha guardado.', 'Estado': 'Hay un ganador. Esperando la confirmación.'})
-                except Auction.DoesNotExist:
-                    return Response({'Status': 'El artículo no tiene una subasta activa o no existe'})
-        except Auction.DoesNotExist:
-            content = {'errors': 'El artículo no existe'}
-            return Response(content, status = status.HTTP_404_NOT_FOUND)
+            article = Article.article_objects.get(id = article_id)
             
+            # Si ya existe un pago en una subasta activa
+            try: 
+                # Extracción del ID de la subasta
+                auction_id = article.articulo_subasta.id
+                
+                if Auction.objects.get(pk = auction_id).payment is not None:
+                    content = {'errors': 'La subasta ha finalizado.'}
+                    return Response(content, status = status.HTTP_404_NOT_FOUND)
+                
+                else:
+                    # Recuperar un objeto Artículo en Artículo
+                    try:
+                        auction = Auction.objects.get(id=auction_id)
+                        
+                        article = Article.article_objects.get(id = auction.article.id)
 
+                        payment = Payment.objects.create(
+                            amount = auction.article.current_bid,
+                            user = self.request.user,
+                            description = serializer.validated_data.pop('description'),
+                            payment_type = serializer.validated_data.pop('payment_type'),
+                            status_payment = serializer.validated_data.pop('status_payment'),
+                            date_payment = timezone.now(),
+                        )
+
+                        article.buyer = self.request.user
+                        article.is_active = False
+                        article.save()
+
+                        auction.payment = payment
+                        auction.save()
+
+                        # Envío de correo electrónico cuando se cierra una subasta. 
+                        current_site = get_current_site(request).domain
+                        relativeLink = reverse('payment_app:confirmar-pago')
+                        #absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
+                        email_body = '¡En hora buena ' + str(self.request.user) + '!\n' + 'Haz ganado la subasta del artículo: ' + str(article.name) + '\n' + 'El precio que tienes que pagar es: ' + str(article.current_bid) + ' $'
+                        data = {
+                            'email_body': email_body, 
+                            'email_recipient': self.request.user,
+                            'email_subject': 'Confirmación del Pago'
+                        }
+                        
+                        Util.send_email(data)
+                        content = {'messages': 'Su pago se ha procesado correctamente'}
+                        return Response(content, status = status.HTTP_200_OK)
+                    except Auction.DoesNotExist:
+                        content = {'errors': 'El artículo no tiene una subasta activa o no existe'}
+                        return Response(content, status = status.HTTP_404_NOT_FOUND)
+            except Auction.DoesNotExist:
+                content = {'errors': 'El artículo no tiene una subasta activa'}
+                return Response(content, status = status.HTTP_404_NOT_FOUND)
+        except Article.DoesNotExist:
+            content = {'errors': 'El artículo no existe'}
+            return Response(content, status = status.HTTP_404_NOT_FOUND) 
+            
     def retrieve(self, request, pk=None):
         # Extraer objeto si lo halla o mostrar 404 si no. 
         payment = get_object_or_404(Payment.objects.all(), pk=pk)

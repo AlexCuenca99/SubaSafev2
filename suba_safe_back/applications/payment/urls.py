@@ -5,5 +5,5 @@ from . import viewsets
 app_name = 'payment_app'
 
 urlpatterns = [
-    # path('confirmar/pago/', viewsets.PaymentProcessViewSet, name='confirmar-pago'),
+    path('confirmar/pago/', viewsets.PaymentProcessViewSet, name='confirmar-pago'),
 ]
