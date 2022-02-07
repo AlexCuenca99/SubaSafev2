@@ -1,4 +1,7 @@
 # Imports de Third-Party Apps
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 
 # Imports de serializadores
@@ -50,7 +53,7 @@ class ActiveArticlesByUserListAPIView(generics.ListAPIView):
         is_active = True
         user = self.request.user
         
-        return Article.article_objects.inactive_articles_by_user(is_active, user)
+        return Article.article_objects.active_articles_by_user(is_active, user)
 
 
 # Vista para filtrar los artículos inactivos por usuario
@@ -64,7 +67,24 @@ class InactiveArticlesByUserListAPIView(generics.ListAPIView):
         return Article.article_objects.inactive_articles_by_user(is_active, user)
 
 
-# Vista para realizar una búsqueda de artículos
+class ArticlesByBuyerListAPIView(generics.ListAPIView):
+    serializer_class = ArticleSerializer
+    
+    # Únicamente los usuarios con un token de acceso podrán 
+    # usar a las operaciones CRUD
+    authentication_classes = (
+        TokenAuthentication,
+        JWTAuthentication,
+    )
+    
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        
+        return Article.article_objects.inactive_articles_by_user(user)
+
+# Vista para realizar una búsqueda de artículos por caracteres contenidos en el nombre
 class ArticleSearchByNameListAPIView(generics.ListAPIView):
     serializer_class = ArticleSerializer
     
