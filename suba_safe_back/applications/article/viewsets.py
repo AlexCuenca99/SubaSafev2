@@ -123,4 +123,19 @@ class ArticleViewSet(viewsets.ModelViewSet):
             content = {'error': 'La Categoría no existe'}
             
             return Response(content, status = status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, pk=None):
+        article = get_object_or_404(Article.article_objects.all(), pk=pk)
         
+        if not article.is_active and article.current_bid is None:
+            article.delete()
+            content = {'messages': 'El artículo ha sido borrado correcmtamente'}
+            return Response(content, status=status.HTTP_204_NO_CONTENT)
+        elif not article.is_active and article.buyer is not None:
+            content = {'errors': 'El artículo no se puede borrar. Existe un pago sobre él.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            content = {'errors': 'El artículo no se puede borrar. Existe una subasta en proceso sobre él.'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+
