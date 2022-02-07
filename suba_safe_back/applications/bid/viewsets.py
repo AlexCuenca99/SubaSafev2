@@ -78,12 +78,12 @@ class BidProcessViewSet(viewsets.ViewSet):
                 auction = article.articulo_subasta.article
 
                 # Comprobar si oferta es válida
-                if is_valid(article, offer):
+                if article.is_active and is_valid(article, offer):
                     
                     #Crear objeto de tipo Subasta
                     bid = Bid.objects.create(
                         bidder = self.request.user,
-                        offer = serializer.validated_data.pop('offer'),
+                        offer = serializer.validated_data.get('offer'),
                         article = article,
                     )
 
@@ -92,8 +92,11 @@ class BidProcessViewSet(viewsets.ViewSet):
                     article.save()
 
                     return Response(serializer.data, status = status.HTTP_201_CREATED)
+                elif not article.is_active:
+                    content = {'errors': 'La subasta ha finalizado'}
+                    return Response(content, status = status.HTTP_400_BAD_REQUEST)
                 else:
-                    content = {'errors': 'La oferta no es válida'}
+                    content = {'errors': 'La oferta no es válida. Ingrese una cantidad mayor a la oferta actual o a la oferta inicial.'}
                     return Response(content, status = status.HTTP_400_BAD_REQUEST)
 
             except Article.DoesNotExist:

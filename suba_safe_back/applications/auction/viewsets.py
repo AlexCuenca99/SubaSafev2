@@ -25,9 +25,9 @@ from .models import Auction
 
 # Validar si un artículo sigue activo y si el tiempo de subasta es válido
 def is_valid(article, current_time):
-    if article.is_active and current_time > timezone.now():
+    if (not article.is_active and article.current_bid is None) and current_time > timezone.now():
         return 'both_valid'
-    elif not article.is_active:
+    elif not article.is_active and article.current_bid is not None:
         return 'active_failure'
     else:
         return 'current_time_failure'
