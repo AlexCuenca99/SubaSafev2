@@ -82,7 +82,7 @@ class ArticlesByBuyerListAPIView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         
-        return Article.article_objects.inactive_articles_by_user(user)
+        return Article.article_objects.articles_by_buyer(user)
 
 # Vista para realizar una búsqueda de artículos por caracteres contenidos en el nombre
 class ArticleSearchByNameListAPIView(generics.ListAPIView):
