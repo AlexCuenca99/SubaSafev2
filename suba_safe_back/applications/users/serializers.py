@@ -99,7 +99,7 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
 
 
 # Serializador para realizar el inicio de sesión de un usuario
-class LoginSerializer(serializers.ModelSerializer):
+class JWTLoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=25, min_length=2, write_only=True)
     username = serializers.CharField(max_length=25, min_length=2, read_only = True)
     tokens = serializers.CharField(max_length=25, min_length=2, read_only = True)
@@ -134,3 +134,4 @@ class LoginSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    

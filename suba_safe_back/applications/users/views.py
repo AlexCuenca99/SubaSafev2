@@ -1,9 +1,12 @@
 # Imports de Third Party Apps
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny
+)
 from rest_framework import status
 from firebase_admin import auth
 from drf_yasg import openapi
@@ -11,6 +14,7 @@ from rest_framework import (
     generics, 
     views,
 )
+
 import jwt
 
 # Imports de Django
@@ -27,7 +31,8 @@ from .serializers import (
     EmailVerificationSerializer,
     LoginSocialSerializer, 
     RegisterSerializer, 
-    UserSerializer
+    JWTLoginSerializer,
+    UserSerializer,
 )
 
 # Imports de Modelos
@@ -95,6 +100,7 @@ class GoogleLoginAPIView(views.APIView):
 class RegisterAPIView(generics.GenericAPIView):
 
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request):
         user = request.data
@@ -118,7 +124,7 @@ class RegisterAPIView(generics.GenericAPIView):
         }
         
         Util.send_email(data)
-
+        # send_mail(subject='Verify your email', message = email_body, recipient_list = [user.email], from_email=settings.EMAIL_HOST_USER)
         return Response(user_data, status = status.HTTP_201_CREATED)
 
 
@@ -163,3 +169,11 @@ class UserAuthView(views.APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+    
+class JWTLoginAPIView(generics.GenericAPIView):
+    serializer_class = JWTLoginSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exceptions = True)
+        
+        
