@@ -75,8 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'suba_safe_back.wsgi.application'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
